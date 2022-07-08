@@ -1,0 +1,45 @@
+steps:
+
+- id: "Rodando docker-compose"
+  name: 'docker/compose'
+  args: ['-f', 'devops/ci/laravel/docker-compose.cloudbuild.yaml', 'up', '-d']
+
+- id: "Chwon in /var/www"
+  name: 'docker'
+  args: ['exec', '-u', 'root', '-t', 'app', 'chown', '-R', 'www-data:www-data', '/var/www']
+
+# - id: "Rodando docker ps"
+#   name: 'docker'
+#   args: ['ps']
+
+# - id: "Listando base de dados"
+#   name: 'docker'
+#   args: ['exec', '-t', 'db', 'sh', '-c', 'mysql', '-uadmin', '-padmin', '-e', “show databases;”']
+
+- id: "Rodando composer"
+  name: 'docker'
+  args: ['exec', '-t', 'app', 'composer', 'install']
+
+- id: "Copiando .env"
+  name: 'docker'
+  args: ['exec', '-t', 'app', 'cp', '-v', '.env.example', '.env']
+
+- id: "Rodando key:generate"
+  name: 'docker'
+  args: ['exec', '-t', 'app', 'php', '/var/www/artisan', 'key:generate']
+
+- id: "Testando conexão com BD"
+  name: 'docker'
+  args: ['exec', '-t', 'app', 'dockerize', '-wait', 'tcp://db:3306', '-timeout', '40s']
+
+- id: "Logs Mysql"
+  name: 'docker'
+  args: ['logs', 'db']
+
+- id: "Rodando migrations"
+  name: 'docker'
+  args: ['exec', '-t', 'app', 'php', '/var/www/artisan', 'migrate']
+
+- id: "Rodando PHPunit"
+  name: 'docker'
+  args: ['exec', '-t', 'app', 'php', '/var/www/vendor/bin/phpunit', '-c', '/var/www/phpunit.xml']
