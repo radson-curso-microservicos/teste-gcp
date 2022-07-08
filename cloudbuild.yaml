@@ -20,9 +20,9 @@ steps:
   name: 'docker'
   args: ['exec', '-t', 'app', 'composer', 'install']
 
-- id: "Copiando .env"
-  name: 'docker'
-  args: ['exec', '-t', 'app', 'cp', '-v', '.env.example', '.env']
+# - id: "Copiando .env"
+#   name: 'docker'
+#   args: ['exec', '-t', 'app', 'cp', '-v', '.env.example', '.env']
 
 - id: "Rodando key:generate"
   name: 'docker'
