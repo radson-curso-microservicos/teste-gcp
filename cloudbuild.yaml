@@ -38,7 +38,7 @@ steps:
 
 - id: "Rodando migrations"
   name: 'docker'
-  args: ['exec', '-t', 'app', 'php', '/var/www/artisan', 'migrate']
+  args: ['exec', '-t', 'app', 'php', '/var/www/artisan', 'migrate:fresh']
 
 - id: "Rodando PHPunit"
   name: 'docker'
